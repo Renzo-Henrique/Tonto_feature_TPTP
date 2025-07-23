@@ -1,64 +1,71 @@
-
-import chalk from "chalk";
 import { glob } from "glob";
+import { CompositeGeneratorNode } from "langium/generate";
 import { NodeFileSystem } from "langium/node";
+import * as fs from "node:fs";
 import path from "path";
 import { Model, builtInLibs } from "../../../language/index.js";
-import { TontoServices, createTontoServices } from "../../../language/tonto-module.js";
-import { extractAllAstNodes, extractAstNode } from "../../cli-util.js";
-//import { generateJSONFileModular } from "../../generators/jsonModular.generator.js";
-//import { generateJSONFile } from "../../jsonGenerator.js";
-import { TontoManifest } from "../../model/grammar/TontoManifest.js";
-import { readOrCreateDefaultTontoManifest } from "../../utils/readManifest.js";
-//TODO::
-import { generateTptpFileModular } from "../../generators/tptpModular.generator.js";
-import { generateTptpFile } from "../../tptpGenerator.js";
+import { createTontoServices } from "../../../language/tonto-module.js";
+import { extractAllAstNodes } from "../../cli-util.js";
+import { GeneratorContext, parseProject } from "../../generators/jsonModular.generator.js";
+import { ErrorGufoResultResponse, GufoResultResponse, TontoManifest, TransformTontoToGufo, createDefaultTontoManifest } from "../../main.js";
 
-export const generateTptpCommand = async (fileName: string, destination: string): Promise<string | undefined> => {
-    const services = createTontoServices({ ...NodeFileSystem }).Tonto;
-    const model = await extractAstNode<Model>(fileName, services);
-    const generatedFilePath = generateTptpFile(model, fileName, destination);
-    return generatedFilePath;
-};
-
-// TODO: Make this function generate file on folder
-export async function generateModularTptpCommand(dir: string): Promise<string | undefined> {
+export const transformToTptpCommand = async (
+    dirName: string
+): Promise<GufoResultResponse | ErrorGufoResultResponse> => {
     const services = createTontoServices({ ...NodeFileSystem }).Tonto;
 
-    let manifest: TontoManifest;
-    let folderAbsolutePath: string;
-    // Find tonto.json file
-    try {
-        /**
-         * Create Tonto Manifest file if it does not exist or read from an existing
-         * one
-         */
-        manifest = readOrCreateDefaultTontoManifest(dir);
+    let manifest: TontoManifest | undefined;
 
-        console.log(chalk.bold("tonto_tptp.p file parsed successfully."));
-        folderAbsolutePath = path.resolve(dir);
-        const createdFile = await createModelTptp(dir, manifest, services, folderAbsolutePath);
+    const folderAbsolutePath = path.resolve(dirName);
 
-        console.log(chalk.green("Tptp File generated successfully: "));
-        return Promise.resolve(createdFile);
-    } catch (error) {
-        console.log(chalk.red(error));
-        return Promise.reject();
+    if (!fs.existsSync(path.join(folderAbsolutePath, "tonto.json"))) {
+        manifest = createDefaultTontoManifest();
+    } else {
+        const filePath = path.join(dirName, "tonto.json");
+
+        const tontoManifestContent = fs.readFileSync(filePath, "utf-8");
+        manifest = JSON.parse(tontoManifestContent);
     }
-}
-//TODO:: Consertar função
-async function createModelTptp(
-    dir: string,
-    manifest: TontoManifest,
-    services: TontoServices,
-    folderAbsolutePath: string
-): Promise<string | undefined> {
-    const allFiles = await glob(dir + "/**/*.tonto");
+
+    if (manifest === undefined) {
+        return {
+            status: 400,
+            message: "Could not find or create default tonto.json file",
+        } as ErrorGufoResultResponse;
+    }
+
+    const allFiles = await glob(dirName + "/**/*.tonto");
 
     const models: Model[] = await extractAllAstNodes(allFiles, services, builtInLibs, false);
 
-    generateTptpFileModular(models, manifest, folderAbsolutePath);
+    const context: GeneratorContext = {
+        models,
+        fileNode: new CompositeGeneratorNode(),
+        manifest: manifest,
+        folderAbsolutePath,
+    };
 
-    return `${manifest.projectName}.p`;
+    const project = parseProject(context);
+
+    //TODO:: Trocar Aqui!
+    const transformResult = TransformTontoToGufo(project);
+    if (transformResult) {
+        return transformResult;
+    } else {
+        return {
+            status: 500,
+            message: "Transformation failed",
+        } as ErrorGufoResultResponse;
+    }
+};
+
+export function isTptpResultResponse(value: unknown): value is GufoResultResponse | ErrorGufoResultResponse {
+    if (typeof value === "object" && value !== null) {
+        if ("result" in value) {
+            return typeof value.result === "string";
+        } else if ("info" in value) {
+            return !Array.isArray(value.info);
+        }
+    }
+    return false;
 }
-

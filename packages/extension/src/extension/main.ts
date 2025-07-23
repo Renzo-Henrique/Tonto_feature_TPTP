@@ -8,7 +8,7 @@ import { createTpmInstallCommands } from "../commands/TpmInstallCommand.js";
 import { createValidationSatusBarItem } from "../commands/validationCommand.js";
 import { activateDiagram } from "../diagram/activateDiagram.js";
 import { TontoLibraryFileSystemProvider } from "./TontoLibraryFileSystemProvider.js";
-import { createGenerateTptpStatusBarItem } from "../commands/TptpGenerationCommand.js";
+import { createTransformToTptpStatusBarItem } from "../commands/TptpTransformCommand.js";
 
 let languageClient: LanguageClient;
 let generateTontoStatusBarItem: vscode.StatusBarItem;
@@ -18,7 +18,7 @@ let validateStatusBarItem: vscode.StatusBarItem;
 let transformToGufoStatusBarItem: vscode.StatusBarItem;
 let tpmInstallStatusBarItem: vscode.StatusBarItem;
 let outputChannel: vscode.OutputChannel;
-let generateTptpStatusBarItem: vscode.StatusBarItem;
+let transformToTptpStatusBarItem: vscode.StatusBarItem;
 
 
 // This function is called when the extension is activated.
@@ -33,7 +33,7 @@ export function activate(context: vscode.ExtensionContext): void {
     createValidationSatusBarItem(context, validateStatusBarItem, outputChannel);
     createTransformToGufoSatusBarItem(context, transformToGufoStatusBarItem);
     createTpmInstallCommands(context, tpmInstallStatusBarItem);
-    createGenerateTptpStatusBarItem(context, generateTptpStatusBarItem);
+    createTransformToTptpStatusBarItem(context, transformToTptpStatusBarItem);
     activateDiagram(context, languageClient);
 }
 
@@ -48,6 +48,7 @@ export function deactivate(): Thenable<void> | undefined {
     tpmInstallStatusBarItem.dispose();
     generateTontoStatusBarItem.dispose();
     transformToGufoStatusBarItem.dispose();
+    transformToTptpStatusBarItem.dispose();
     return undefined;
 }
 

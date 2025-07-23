@@ -9,7 +9,7 @@ import { isGufoResultResponse, transformToGufoCommand } from "./commands/generat
 import { ImportOptions, newImportCommand } from "./commands/importCommand.js";
 import { validateCommand } from "./commands/validateCommand.js";
 import { validateCommandLocal } from "./commands/validateLocalCommand.js";
-// TODO::
+// TODO:: verificar corretude do arquivo
 // import { ErrorTptpResultResponse, TptpResultResponse } from "../requests/tptpTransform.js";
 // import { isTptpResultResponse, transformToTptpCommand } from "./commands/generateTptpCommand.js";
 
