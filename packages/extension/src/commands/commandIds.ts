@@ -12,8 +12,11 @@ export enum CommandIds {
     tpmInstall = "tonto.tpm.install",
     tpmInstallFromButton = "tonto.tpm.installFromButton",
     configuration = "tonto.openSettings",
+    //
     transformTontoToTptpFromButton = "tonto.transformModelToTptpFromButton",
     transformTontoToTptp = "tonto.transformModelToTptp",
+    validateTontoByTptpFromButton = "tonto.validateModelByTptpFromButton",
+    validateTontoByTptp = "tonto.validateModelByTptp",
 }
 
 export const commandPalletteIds = [
@@ -27,5 +30,5 @@ export const commandPalletteIds = [
     CommandIds.configuration,
     CommandIds.configuration,
     CommandIds.transformTontoToTptp,
-    //CommandIds.generateTptp,
+    CommandIds.validateTontoByTptp,
 ];

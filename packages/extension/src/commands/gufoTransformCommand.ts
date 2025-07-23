@@ -7,7 +7,7 @@ import {
 import * as vscode from "vscode";
 import { CommandIds } from "./commandIds.js";
 
-function createTransformToGufoSatusBarItem(context: vscode.ExtensionContext, statusBarItem: vscode.StatusBarItem) {
+function createTransformToGufoStatusBarItem(context: vscode.ExtensionContext, statusBarItem: vscode.StatusBarItem) {
     context.subscriptions.push(
         vscode.commands.registerCommand(CommandIds.transformTontoFromButton, createStatusBarItemValidateTontoCommand)
     );
@@ -124,4 +124,4 @@ function isErrorResultResponse(
     return (response as ErrorGufoResultResponse).info !== undefined;
 }
 
-export { createTransformToGufoSatusBarItem, isErrorResultResponse };
+export { createTransformToGufoStatusBarItem, isErrorResultResponse };

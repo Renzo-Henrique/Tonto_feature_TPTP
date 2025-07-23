@@ -1,20 +1,21 @@
 import chalk from "chalk";
+//TODO:: Trocar comando de validação no futuro
 import { ErrorResultResponse, validateCommand, ValidationReturn } from "tonto-cli";
 import * as vscode from "vscode";
 import { CommandIds } from "./commandIds.js";
 
-function createValidationStatusBarItem(
+function createValidationByTptpStatusBarItem(
     context: vscode.ExtensionContext,
     statusBarItem: vscode.StatusBarItem,
     outputChannel: vscode.OutputChannel
 ) {
     context.subscriptions.push(
-        vscode.commands.registerCommand(CommandIds.validateTontoFromButton, () => {
+        vscode.commands.registerCommand(CommandIds.validateTontoByTptpFromButton, () => {
             createStatusBarItemValidateTontoCommand(outputChannel);
         })
     );
     context.subscriptions.push(
-        vscode.commands.registerCommand(CommandIds.validateTonto, () => {
+        vscode.commands.registerCommand(CommandIds.validateTontoByTptp, () => {
             createValidateTontoCommand(outputChannel);
         })
     );
@@ -25,7 +26,7 @@ function createValidationStatusBarItem(
 function createStatusBarItem(context: vscode.ExtensionContext, statusBarItem: vscode.StatusBarItem) {
     // create a new status bar item that we can now manage
     statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 48);
-    statusBarItem.command = CommandIds.validateTontoFromButton;
+    statusBarItem.command = CommandIds.validateTontoByTptpFromButton;
     context.subscriptions.push(statusBarItem);
 
     // register some listener that make sure the status bar
@@ -46,7 +47,7 @@ function createStatusBarItem(context: vscode.ExtensionContext, statusBarItem: vs
 }
 
 function updateValidationStatusBarItem(statusBarItem: vscode.StatusBarItem): void {
-    statusBarItem.text = "$(check-all) Validate Model";
+    statusBarItem.text = "$(book)Validate Model By TPTP $(check-all)";
     statusBarItem.show();
 }
 
@@ -99,6 +100,7 @@ async function validateModel(directoryUri: vscode.Uri, outputChannel: vscode.Out
             cancellable: false,
         },
         async () => {
+            //TODO:: Mudar aqui para condizer com a biblioteca
             const response: ValidationReturn | ErrorResultResponse = await validateCommand(directoryUri.fsPath);
 
             if (isValidationReturn(response)) {
@@ -124,4 +126,4 @@ function isValidationReturn(object: unknown): object is ValidationReturn {
     return typeof object === "object" && object !== null && "result" in (object as Record<string, unknown>);
 }
 
-export { createValidationStatusBarItem };
+export { createValidationByTptpStatusBarItem };

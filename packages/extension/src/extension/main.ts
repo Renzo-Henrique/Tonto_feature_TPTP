@@ -1,14 +1,16 @@
 import * as path from "path";
 import * as vscode from "vscode";
 import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind } from "vscode-languageclient/node.js";
-import { createTransformToGufoSatusBarItem } from "../commands/gufoTransformCommand.js";
+import { createTransformToGufoStatusBarItem } from "../commands/gufoTransformCommand.js";
 import { createGenerateJsonStatusBarItem } from "../commands/JsonGenerationCommands.js";
 import { createTontoGenerationStatusBarItem } from "../commands/TontoGenerationCommand.js";
 import { createTpmInstallCommands } from "../commands/TpmInstallCommand.js";
-import { createValidationSatusBarItem } from "../commands/validationCommand.js";
+import { createValidationStatusBarItem } from "../commands/validationCommand.js";
 import { activateDiagram } from "../diagram/activateDiagram.js";
 import { TontoLibraryFileSystemProvider } from "./TontoLibraryFileSystemProvider.js";
+//
 import { createTransformToTptpStatusBarItem } from "../commands/TptpTransformCommand.js";
+import { createValidationByTptpStatusBarItem } from "../commands/validationByTptpCommand.js";
 
 let languageClient: LanguageClient;
 let generateTontoStatusBarItem: vscode.StatusBarItem;
@@ -19,6 +21,7 @@ let transformToGufoStatusBarItem: vscode.StatusBarItem;
 let tpmInstallStatusBarItem: vscode.StatusBarItem;
 let outputChannel: vscode.OutputChannel;
 let transformToTptpStatusBarItem: vscode.StatusBarItem;
+let validateByTptpStatusBarItem: vscode.StatusBarItem;
 
 
 // This function is called when the extension is activated.
@@ -30,10 +33,11 @@ export function activate(context: vscode.ExtensionContext): void {
     createGenerateJsonStatusBarItem(context, generateJsonStatusBarItem);
     createTontoGenerationStatusBarItem(context, generateTontoStatusBarItem);
     // createGenerateDiagramStatusBarItem(context, generateDiagramStatusBarItem);
-    createValidationSatusBarItem(context, validateStatusBarItem, outputChannel);
-    createTransformToGufoSatusBarItem(context, transformToGufoStatusBarItem);
+    createValidationStatusBarItem(context, validateStatusBarItem, outputChannel);
+    createTransformToGufoStatusBarItem(context, transformToGufoStatusBarItem);
     createTpmInstallCommands(context, tpmInstallStatusBarItem);
     createTransformToTptpStatusBarItem(context, transformToTptpStatusBarItem);
+    createValidationByTptpStatusBarItem(context, validateByTptpStatusBarItem, outputChannel);
     activateDiagram(context, languageClient);
 }
 
@@ -49,6 +53,7 @@ export function deactivate(): Thenable<void> | undefined {
     generateTontoStatusBarItem.dispose();
     transformToGufoStatusBarItem.dispose();
     transformToTptpStatusBarItem.dispose();
+    validateByTptpStatusBarItem.dispose();
     return undefined;
 }
 

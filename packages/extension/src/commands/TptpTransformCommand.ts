@@ -2,7 +2,7 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import {
     ErrorGufoResultResponse, GufoResultResponse, isGufoResultResponse,
-    readOrCreateDefaultTontoManifest, ResultResponse, transformToGufoCommand
+    readOrCreateDefaultTontoManifest, ResultResponse, transformToTptpCommand
 } from "tonto-cli";
 import * as vscode from "vscode";
 import { CommandIds } from "./commandIds.js";
@@ -94,7 +94,8 @@ async function transformModel(directoryUri: vscode.Uri) {
             cancellable: false,
         },
         async () => {
-            const response = await transformToGufoCommand(directoryUri.fsPath);
+            //TODO:: Transformar isso em uma função da nova biblioteca a ser implementada
+            const response = await transformToTptpCommand(directoryUri.fsPath);
 
             if (isGufoResultResponse(response)) {
                 const gufoResult = response as GufoResultResponse;
