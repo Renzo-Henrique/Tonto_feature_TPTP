@@ -1,7 +1,8 @@
-import fetch from "node-fetch-native";
+/*import fetch from "node-fetch-native";
 import { Project } from "ontouml-js";
 
 //TODO:: verificar corretude do arquivo
+//TODO:: É necessário? Percebi que é request de api
 
 export interface TptpResultResponse {
     result: string
@@ -21,13 +22,13 @@ interface ErrorInfo {
     title?: string
 }
 
-//TODO:: Corretude da func
+
 export async function TransformTontoToTptp(project: Project): Promise<TptpResultResponse | ErrorTptpResultResponse> {
     const body = {
         project,
         options: undefined,
     };
-
+    
     try {
         const response = await fetch("http://api.ontouml.org/v1/transform/gufo", {
             method: "post",
@@ -49,3 +50,5 @@ export async function TransformTontoToTptp(project: Project): Promise<TptpResult
         message: "error while transforming model to Gufo",
     } as ErrorTptpResultResponse;
 }
+
+*/
