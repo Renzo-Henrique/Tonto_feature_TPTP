@@ -146,6 +146,14 @@
             {
                 "command": "catCoding.start",
                 "title": "Start Cat Coding"
+            },
+            {
+                "command": "tonto.generateTptpFromButton",
+                "title": "Generate TPTP file (Button)"
+            },
+            {
+                "command": "tonto.generateTptp",
+                "title": "Generate TPTP file"
             }
         ],
         "keybindings": [
