@@ -74,4 +74,5 @@ export * from "./model/grammar/TontoManifest.js";
 export * from "./requests/gufoTransform.js";
 export * from "./requests/ontoumljsValidator.js";
 export * from "./utils/readManifest.js";
+export * from "./requests/tptpTransform.js";
 

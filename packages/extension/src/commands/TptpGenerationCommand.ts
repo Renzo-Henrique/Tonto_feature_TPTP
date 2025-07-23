@@ -1,8 +1,10 @@
-import * as fs from "fs/promises";
-import * as path from "path";
+
+import { generateModularTptpCommand } from "tonto-cli";
 import * as vscode from "vscode";
 import { CommandIds } from "./commandIds.js";
 
+/*import * as fs from "fs/promises";
+import * as path from "path";
 const tptpContent = `% Include ontology modules for taxonomic and foundational axioms
 include('./axioms/01_taxonomy_thing.p').
 include('./axioms/02_taxonomy_abstract_individual.p').
@@ -176,7 +178,7 @@ fof(conj_disjoint_child_adult_teenager, conjecture, (
   %![X]: ((universityStudent(X) => (child(X) | teenager(X) | adult(X))))
   %?[X]: (teenager(X) & (universityStudent(X)))
 %)).
-`;
+`;*/
 
 // Função principal para criar o status bar item
 function createGenerateTptpStatusBarItem(context: vscode.ExtensionContext, statusBarItem: vscode.StatusBarItem) {
@@ -220,9 +222,9 @@ function updateTptpStatusBarItem(statusBarItem: vscode.StatusBarItem): void {
 async function generateTptp(workspaceFolder: vscode.WorkspaceFolder) {
     // Aqui você colocaria sua função real de geração de TPTP. Por enquanto é só exemplo.
     //vscode.window.showInformationMessage(`TPTP file generated for workspace: "${workspaceFolder.uri.fsPath}"`);
-    try {
+    /*try {
         // Caminho do arquivo .p no workspace
-        const filePath = path.join(workspaceFolder.uri.fsPath, "_tptp.p");
+        const filePath = path.join(workspaceFolder.uri.fsPath, "tptp.p");
 
         // Se quiser usar generateModularCommand, chame aqui; caso contrário, escreva o arquivo direto:
         // const generatedFileName = await generateModularCommand(workspaceFolder.uri.fsPath);
@@ -234,7 +236,14 @@ async function generateTptp(workspaceFolder: vscode.WorkspaceFolder) {
         vscode.window.showInformationMessage(`TPTP file generated successfully at "${filePath}"`);
     } catch (err) {
         vscode.window.showErrorMessage(`Error generating TPTP file: ${err}`);
-    }
+    }*/
+   const filePattern = workspaceFolder.uri.path + "tonto_tptp.p";
+    vscode.workspace.findFiles(filePattern).then(async (_) => {
+        const generatedFileName = await generateModularTptpCommand(workspaceFolder.uri.path);
+        if (generatedFileName) {
+            vscode.window.showInformationMessage(`TPTP File generated successfully with name "${generatedFileName}"`);
+        }
+    });
 }
 
 async function createCommandPaletteGenerateTptpCommand() {

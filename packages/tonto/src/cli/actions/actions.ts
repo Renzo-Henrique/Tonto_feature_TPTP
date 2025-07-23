@@ -9,6 +9,9 @@ import { isGufoResultResponse, transformToGufoCommand } from "./commands/generat
 import { ImportOptions, newImportCommand } from "./commands/importCommand.js";
 import { validateCommand } from "./commands/validateCommand.js";
 import { validateCommandLocal } from "./commands/validateLocalCommand.js";
+// TODO::
+// import { ErrorTptpResultResponse, TptpResultResponse } from "../requests/tptpTransform.js";
+// import { isTptpResultResponse, transformToTptpCommand } from "./commands/generateTptpCommand.js";
 
 export type GenerateOptions = {
     destination?: string;
@@ -111,6 +114,36 @@ export class TontoActions {
                 console.log(chalk.bold.red(error.message));
             }
             console.log(chalk.bold.green("Validation finished"));
+        } catch (error) {
+            console.log(chalk.red(error));
+        }
+    }
+    //TODO:: Consertar essa função
+    async transformToTptpAction(dirName: string): Promise<void> {
+        if (!dirName) {
+            console.log(chalk.red("Directory not provided!"));
+            return;
+        }
+        console.log(chalk.bold("Transforming to gufo..."));
+
+        try {
+            const manifest = readOrCreateDefaultTontoManifest(dirName);
+            const response = await transformToGufoCommand(dirName);
+
+            if (isGufoResultResponse(response)) {
+                const resultResponse = response as GufoResultResponse;
+                if (!fs.existsSync(dirName)) {
+                    fs.mkdirSync(dirName);
+                }
+                fs.writeFileSync(path.join(dirName, manifest.outFolder, manifest.projectName), resultResponse.result);
+            } else {
+                const errorResponse = response as ErrorGufoResultResponse;
+                errorResponse.info.forEach((errorInfo) => {
+                    console.log(chalk.bold.redBright(`[${errorInfo.severity}] ${errorInfo.title}:`));
+                    console.log(chalk.red(errorInfo.description));
+                });
+            }
+            console.log(chalk.bold.green("Transformation to Gufo finished"));
         } catch (error) {
             console.log(chalk.red(error));
         }
