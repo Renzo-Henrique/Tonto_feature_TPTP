@@ -47,6 +47,7 @@ export const transformToTptpCommand = async (
 
     const project = parseProject(context);
 
+    // --------------------------------------------------
     //TODO:: Trocar Aqui!
     const transformResult = TransformTontoToGufo(project);
     if (transformResult) {
@@ -59,6 +60,7 @@ export const transformToTptpCommand = async (
     }
 };
 
+//TODO:: Trocar o tipo de resposta
 export function isTptpResultResponse(value: unknown): value is GufoResultResponse | ErrorGufoResultResponse {
     if (typeof value === "object" && value !== null) {
         if ("result" in value) {

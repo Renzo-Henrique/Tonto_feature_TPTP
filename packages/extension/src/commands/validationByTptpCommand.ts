@@ -1,6 +1,6 @@
 import chalk from "chalk";
 //TODO:: Trocar comando de validação no futuro
-import { ErrorResultResponse, validateCommand, ValidationReturn } from "tonto-cli";
+import { ErrorResultResponse, validateByTptpCommand, ValidationReturn } from "tonto-cli";
 import * as vscode from "vscode";
 import { CommandIds } from "./commandIds.js";
 
@@ -11,12 +11,12 @@ function createValidationByTptpStatusBarItem(
 ) {
     context.subscriptions.push(
         vscode.commands.registerCommand(CommandIds.validateTontoByTptpFromButton, () => {
-            createStatusBarItemValidateTontoCommand(outputChannel);
+            createStatusBarItemValidateTontoByTptpCommand(outputChannel);
         })
     );
     context.subscriptions.push(
         vscode.commands.registerCommand(CommandIds.validateTontoByTptp, () => {
-            createValidateTontoCommand(outputChannel);
+            createValidateTontoByTptpCommand(outputChannel);
         })
     );
 
@@ -51,7 +51,7 @@ function updateValidationStatusBarItem(statusBarItem: vscode.StatusBarItem): voi
     statusBarItem.show();
 }
 
-async function createStatusBarItemValidateTontoCommand(outputChannel: vscode.OutputChannel) {
+async function createStatusBarItemValidateTontoByTptpCommand(outputChannel: vscode.OutputChannel) {
     const editor = vscode.window.activeTextEditor;
     let uri: vscode.Uri | undefined;
     const documentUri = editor?.document.uri;
@@ -67,7 +67,7 @@ async function createStatusBarItemValidateTontoCommand(outputChannel: vscode.Out
     if (uri) {
         const workspaceFolder = vscode.workspace.getWorkspaceFolder(uri);
         if (workspaceFolder) {
-            await validateModel(workspaceFolder.uri, outputChannel);
+            await validateModelByTptp(workspaceFolder.uri, outputChannel);
         } else {
             vscode.window.showErrorMessage("Failed! File needs to be in a workspace");
         }
@@ -76,7 +76,7 @@ async function createStatusBarItemValidateTontoCommand(outputChannel: vscode.Out
     }
 }
 
-async function createValidateTontoCommand(outputChannel: vscode.OutputChannel) {
+async function createValidateTontoByTptpCommand(outputChannel: vscode.OutputChannel) {
     const directoryUri = await vscode.window.showOpenDialog({
         canSelectFiles: false,
         canSelectFolders: true,
@@ -86,13 +86,13 @@ async function createValidateTontoCommand(outputChannel: vscode.OutputChannel) {
 
     if (directoryUri && directoryUri[0]) {
         const selectedFolder = directoryUri[0];
-        await validateModel(selectedFolder, outputChannel);
+        await validateModelByTptp(selectedFolder, outputChannel);
     } else {
         vscode.window.showErrorMessage("Failed! Not a valid directory selected");
     }
 }
 
-async function validateModel(directoryUri: vscode.Uri, outputChannel: vscode.OutputChannel) {
+async function validateModelByTptp(directoryUri: vscode.Uri, outputChannel: vscode.OutputChannel) {
     await vscode.window.withProgress(
         {
             location: vscode.ProgressLocation.Notification,
@@ -101,7 +101,7 @@ async function validateModel(directoryUri: vscode.Uri, outputChannel: vscode.Out
         },
         async () => {
             //TODO:: Mudar aqui para condizer com a biblioteca
-            const response: ValidationReturn | ErrorResultResponse = await validateCommand(directoryUri.fsPath);
+            const response: ValidationReturn | ErrorResultResponse = await validateByTptpCommand(directoryUri.fsPath);
 
             if (isValidationReturn(response)) {
                 outputChannel.clear();

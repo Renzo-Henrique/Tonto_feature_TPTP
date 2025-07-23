@@ -65,6 +65,19 @@ export default function (): void {
         .argument("<dir>", "Directory of the actual project")
         .description("Transform you Tonto project to gufo with the ontouml-js API")
         .action(actions.transformToGufoAction);
+    //TODO:: Verificar corretude de acordo com a linha de comando tonto-cli
+    program
+        .command("validateByTptp")
+        .argument("<dir>", "Directory of the actual project")
+        .option("--local", "Running Local Tonto Checks, or running API checks")
+        .description("Validate your Tonto project with the ontouml-js API and Bibli")
+        .action(actions.validateByTptpAction);
+    //TODO:: Verificar corretude de acordo com a linha de comando tonto-cli
+    program
+        .command("transformToTptp")
+        .argument("<dir>", "Directory of the actual project")
+        .description("Transform you Tonto project to tptp with the ontouml-js API and Bibli")
+        .action(actions.transformToTptpAction);
 
     program.parseAsync(process.argv);
 }

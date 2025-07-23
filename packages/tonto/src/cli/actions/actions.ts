@@ -12,6 +12,7 @@ import { validateCommandLocal } from "./commands/validateLocalCommand.js";
 // TODO:: verificar corretude do arquivo
 // import { ErrorTptpResultResponse, TptpResultResponse } from "../requests/tptpTransform.js";
 // import { isTptpResultResponse, transformToTptpCommand } from "./commands/generateTptpCommand.js";
+import { validateByTptpCommand } from "./commands/validateByTptpCommand.js";
 
 export type GenerateOptions = {
     destination?: string;
@@ -124,7 +125,7 @@ export class TontoActions {
             console.log(chalk.red("Directory not provided!"));
             return;
         }
-        console.log(chalk.bold("Transforming to gufo..."));
+        console.log(chalk.bold("Transforming to tptp..."));
 
         try {
             const manifest = readOrCreateDefaultTontoManifest(dirName);
@@ -143,7 +144,41 @@ export class TontoActions {
                     console.log(chalk.red(errorInfo.description));
                 });
             }
-            console.log(chalk.bold.green("Transformation to Gufo finished"));
+            console.log(chalk.bold.green("Transformation to Tptp finished"));
+        } catch (error) {
+            console.log(chalk.red(error));
+        }
+    }
+    //TODO:: Consertar isso aqui
+    async validateByTptpAction(dirName: string, opts: ValidateOptions): Promise<void> {
+        if (!dirName) {
+            console.log(chalk.red("Directory not provided!"));
+            return;
+        }
+        console.log(chalk.bold("Validating by Tptp..."));
+
+        if (opts.local) {
+            const diagnostics = await validateCommandLocal(dirName);
+            console.log(chalk.bold("- Total of errors:"), diagnostics?.length);
+        }
+
+        try {
+            const response = await validateByTptpCommand(dirName, true);
+
+            // If it is ResultResponse[]
+            if (Array.isArray(response)) {
+                const resultResponses = response as ValidationReturn[];
+                resultResponses.forEach(result => {
+                    result.result.forEach(resultResponse => {
+                        console.log(chalk.bold.redBright(`[${resultResponse.severity}] ${resultResponse.title}:`));
+                        console.log(chalk.red(resultResponse.description));
+                    });
+                });
+            } else {
+                const error = response as ErrorResultResponse;
+                console.log(chalk.bold.red(error.message));
+            }
+            console.log(chalk.bold.green("Validation by Tptp finished"));
         } catch (error) {
             console.log(chalk.red(error));
         }

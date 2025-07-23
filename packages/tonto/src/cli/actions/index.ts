@@ -6,4 +6,5 @@ export * from "./commands/validateCommand.js";
 export * from "./commands/validateLocalCommand.js";
 export * from "./viewAction.js";
 export * from "./commands/generateTptpCommand.js";
+export * from "./commands/validateByTptpCommand.js";
 
