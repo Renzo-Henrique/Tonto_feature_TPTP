@@ -4,7 +4,7 @@ import * as path from "node:path";
 import { MultilingualText, Project } from "ontouml-js";
 import { Model } from "../language/index.js";
 import { extractDestinationAndName } from "./cli-util.js";
-import { contextModuleTptpGenerator } from "./generators/contextModuleTptp.generator.js";
+import { contextModuleGenerator } from "./generators/contextModule.generator.js";
 
 //TODO:: Verificar corretude do arquivo
 export function generateTptpFile(model: Model, filePath: string, destination: string | undefined): string {
@@ -56,6 +56,6 @@ export function parseProjectTptp(ctx: GeneratorTptpContext): Project {
 
     const createdPackage = rootModel.createPackage(contextModule.name);
     // Generate a contextModule
-    contextModuleTptpGenerator(contextModule, createdPackage);
+    contextModuleGenerator(contextModule, createdPackage);
     return project;
 }
